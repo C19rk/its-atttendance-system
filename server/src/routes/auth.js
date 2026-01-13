@@ -26,8 +26,12 @@ import {
   validateChangePassword,
   validateUpdateUserInfo,
 } from "../middlewares/validateUser.js";
+import enableCors from "../_cors.js";
 
 const router = express.Router();
+
+// Preflight for all routes
+router.options("*", (req, res) => enableCors(req, res));
 
 // Multer (Must always be on TOP HERE!!!)
 const uploadsDir = path.join(process.cwd(), "uploads");
@@ -60,27 +64,126 @@ const upload = multer({
   },
 });
 
-router.post("/sign-up", validateSignUp, signUp);
-router.post("/login", validateLogin, login);
-router.post("/forgot-password", forgotPassword);
-router.post("/verify-otp", verifyOtpController);
-router.post("/reset-password", validateResetPassword, resetPassword);
-router.get("/validate-reset-token/:token", validateResetToken);
+router.post(
+  "/sign-up",
+  (req, res, next) => {
+    if (enableCors(req, res)) return;
+    next();
+  },
+  validateSignUp,
+  signUp
+);
 
-// ------------------- Get Logged in user data -------------------
-router.get("/me", verifyToken, getMe);
+router.post(
+  "/login",
+  (req, res, next) => {
+    if (enableCors(req, res)) return;
+    next();
+  },
+  validateLogin,
+  login
+);
 
-// ------------------- Change password -------------------
+router.post(
+  "/forgot-password",
+  (req, res, next) => {
+    if (enableCors(req, res)) return;
+    next();
+  },
+  forgotPassword
+);
+
+router.post(
+  "/verify-otp",
+  (req, res, next) => {
+    if (enableCors(req, res)) return;
+    next();
+  },
+  verifyOtpController
+);
+
+router.post(
+  "/reset-password",
+  (req, res, next) => {
+    if (enableCors(req, res)) return;
+    next();
+  },
+  validateResetPassword,
+  resetPassword
+);
+
+router.get(
+  "/validate-reset-token/:token",
+  (req, res, next) => {
+    if (enableCors(req, res)) return;
+    next();
+  },
+  validateResetToken
+);
+
+// Logged in user
+router.get(
+  "/me",
+  (req, res, next) => {
+    if (enableCors(req, res)) return;
+    next();
+  },
+  verifyToken,
+  getMe
+);
+
+// Change password
 router.post(
   "/change-password",
+  (req, res, next) => {
+    if (enableCors(req, res)) return;
+    next();
+  },
   validateChangePassword,
   verifyToken,
   changePassword
 );
 
-router.put("/update", validateUpdateUserInfo, verifyToken, updateUserInfo);
-router.get("/users", verifyToken, getAllUsers);
-router.get("/admins", verifyToken, getAllAdminUsers);
-router.get("/all-users", verifyToken, getAllUsersWithRoles);
+// Update user info
+router.put(
+  "/update",
+  (req, res, next) => {
+    if (enableCors(req, res)) return;
+    next();
+  },
+  validateUpdateUserInfo,
+  verifyToken,
+  updateUserInfo
+);
+
+router.get(
+  "/users",
+  (req, res, next) => {
+    if (enableCors(req, res)) return;
+    next();
+  },
+  verifyToken,
+  getAllUsers
+);
+
+router.get(
+  "/admins",
+  (req, res, next) => {
+    if (enableCors(req, res)) return;
+    next();
+  },
+  verifyToken,
+  getAllAdminUsers
+);
+
+router.get(
+  "/all-users",
+  (req, res, next) => {
+    if (enableCors(req, res)) return;
+    next();
+  },
+  verifyToken,
+  getAllUsersWithRoles
+);
 
 export default router;
