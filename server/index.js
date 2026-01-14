@@ -3,7 +3,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-import serverless from "serverless-http";
 import errorHandling from "./src/middlewares/errorHandler.js";
 import authRoutes from "./src/routes/auth.js";
 import leaveRoutes from "./src/routes/leaveRoutes.js";
@@ -94,4 +93,4 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-export default serverless(app);
+export default app;
