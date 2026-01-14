@@ -13,7 +13,6 @@ import { checkLeaves } from "./src/cron/leaveChecker.js";
 import { cleanSched } from "./src/cron/cleanExpiredSched.js";
 import { bucket } from "./src/config/firebase.js";
 import pool from "./src/db.js";
-import { credential } from "firebase-admin";
 
 dotenv.config();
 
