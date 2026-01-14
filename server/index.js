@@ -24,26 +24,28 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // middlewares
-app.use((req, res, next) => {
-  // Allow any origin that is hitting the server
-  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, X-Requested-With"
-  );
-  res.setHeader("Access-Control-Allow-Credentials", "true");
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow any Vercel deployment or localhost
+      if (
+        !origin ||
+        origin.endsWith(".vercel.app") ||
+        origin.includes("localhost")
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    credentials: true,
+  })
+);
 
-  // Handle the Preflight (OPTIONS) request immediately
-  if (req.method === "OPTIONS") {
-    return res.status(200).json({});
-  }
+app.options("*", cors());
 
-  next();
-});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

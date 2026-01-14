@@ -26,7 +26,6 @@ import {
   validateChangePassword,
   validateUpdateUserInfo,
 } from "../middlewares/validateUser.js";
-import enableCors from "../_cors.js";
 
 const router = express.Router();
 
