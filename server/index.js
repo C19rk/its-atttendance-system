@@ -24,26 +24,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // middlewares
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow any Vercel deployment or localhost
-      if (
-        !origin ||
-        origin.endsWith(".vercel.app") ||
-        origin.includes("localhost")
-      ) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-    credentials: true,
-  })
-);
-
+app.use(cors());
 app.options("*", cors());
 
 app.use(express.json());
