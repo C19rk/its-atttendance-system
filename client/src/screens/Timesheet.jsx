@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Loader from "../components/Loader";
+import Loader from "../components/Spinner/Loader";
 import AttendanceTable from "../components/AttendanceTable";
 import DashboardLayout from "../components/DashboardLayout";
 import TimeAdjustmentModal from "../components/TimeAdjustmentModal";
