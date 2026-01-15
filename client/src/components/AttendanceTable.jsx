@@ -13,7 +13,7 @@ import "../styles/AttendanceTable.css";
 
 export default function AttendanceTable({
   userId,
-  username,
+  username, // will check
   firstDay,
   lastDay,
   setLoading,
