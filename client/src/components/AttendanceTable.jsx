@@ -16,7 +16,6 @@ export default function AttendanceTable({
   username, // will check
   firstDay,
   lastDay,
-  setLoading,
 }) {
   const user = JSON.parse(localStorage.getItem("user"));
   const role = user?.role;
@@ -74,7 +73,6 @@ export default function AttendanceTable({
   useEffect(() => {
     const fetchAttendance = async () => {
       if (!userId) return;
-      setLoading(true);
       try {
         let res;
         if (role === "ADMIN") res = await getAllAttendance();
@@ -159,9 +157,7 @@ export default function AttendanceTable({
       } catch (err) {
         console.error(err);
         setRecords([]);
-      } finally {
-      setLoading(false); 
-    }
+      } 
     };
 
     fetchAttendance();
@@ -178,7 +174,6 @@ export default function AttendanceTable({
     options,
     timeOptions,
     role,
-    setLoading,
   ]);
 
   const { exportPDF } = useExportPDF();

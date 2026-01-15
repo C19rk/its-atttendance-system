@@ -31,6 +31,7 @@ function Timesheet() {
 
   useEffect(() => {
     fetchRequests();
+    setLoading(false);
   }, []);
 
   // Date range
@@ -108,7 +109,6 @@ function Timesheet() {
             firstDay={firstDay}
             lastDay={lastDay}
             reload={reload}
-            setLoading={setLoading} 
           />
         </Loader>
       </div>
