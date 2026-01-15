@@ -13,9 +13,10 @@ import "../styles/AttendanceTable.css";
 
 export default function AttendanceTable({
   userId,
-  userEmail,
+  username, // will check
   firstDay,
   lastDay,
+  setLoading,
 }) {
   const user = JSON.parse(localStorage.getItem("user"));
   const role = user?.role;
@@ -73,6 +74,7 @@ export default function AttendanceTable({
   useEffect(() => {
     const fetchAttendance = async () => {
       if (!userId) return;
+      setLoading(true);
       try {
         let res;
         if (role === "ADMIN") res = await getAllAttendance();
@@ -138,7 +140,7 @@ export default function AttendanceTable({
             rawLunchOut: r.lunchOut,
             rawLunchIn: r.lunchIn,
 
-            Intern: role === "ADMIN" ? r.user.email : userEmail,
+            Intern: role === "ADMIN" ? r.user.username : user.username,
             Status: r.status,
             Date: new Date(r.date).toLocaleDateString("en-US", options),
             "Time In": ti ? ti.toLocaleTimeString("en-US", timeOptions) : "-",
@@ -157,7 +159,9 @@ export default function AttendanceTable({
       } catch (err) {
         console.error(err);
         setRecords([]);
-      }
+      } finally {
+      setLoading(false); 
+    }
     };
 
     fetchAttendance();
@@ -169,7 +173,7 @@ export default function AttendanceTable({
     filterWeek,
     customStart,
     customEnd,
-    userEmail,
+    user.username,
     reloadCounter,
     options,
     timeOptions,
