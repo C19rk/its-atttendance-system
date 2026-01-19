@@ -25,15 +25,22 @@ export async function recalculateHours(attendanceId) {
   } = att;
 
   // 🔹 Get official schedule
-  const schedule = await getWorkSchedule(userId, new Date(date));
+  const workDateUTC = new Date(date);
+  const schedule = await getWorkSchedule(userId, workDateUTC);
+
   if (!schedule) return att;
 
   const schedStart = schedule.start;
   const schedEnd = schedule.end;
 
   // 🔹 Clamp actual work inside schedule window
-  const actualStart = new Date(Math.max(timeIn, schedStart));
-  const actualEnd = new Date(Math.min(timeOut, schedEnd));
+  const actualStart = new Date(
+    Math.max(timeIn.getTime(), schedStart.getTime())
+  );
+
+  const actualEnd = new Date(
+    Math.min(timeOut.getTime(), schedEnd.getTime())
+  );
 
   let scheduledWorkMinutes = 0;
   if (actualEnd > actualStart) {
