@@ -225,7 +225,7 @@ export default function AttendanceTable({
           onFilterChange={setFilters}
         />
       )}
-      
+
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
@@ -235,71 +235,81 @@ export default function AttendanceTable({
       />
 
       <Loader loading={loading}>
-      {records.length === 0 ? (
-        <p className="attendance_message">
-          No attendance for this{" "}
-          {filterType === "Month" ? "month" : `week ${filterWeek}`}
-        </p>
-      ) : (
-        <div className="attendance_container">
-          <table className="attendance_tbl">
-            <thead>
-              <tr>
-                {Object.keys(records[0])
-                  .filter(
-                    (col) =>
-                      !["rawDate", "rawTimeIn", "rawTimeOut", "rawLunchOut", "rawLunchIn", "id"].includes(
-                        col
-                      )
-                  )
-                  .map((col) => (
-                    <th key={col}>{col}</th>
-                  ))}
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedData.map((r, i) => (
-                <tr key={i}>
-                  {Object.keys(r)
+        {!loading && records.length === 0 ? (
+          <p className="attendance_message">
+            No attendance for this{" "}
+            {filterType === "Month" ? "month" : `week ${filterWeek}`}
+          </p>
+        ) : !loading ? (
+          <div className="attendance_container">
+            <table className="attendance_tbl">
+              <thead>
+                <tr>
+                  {Object.keys(records[0])
                     .filter(
                       (col) =>
-                        !["rawDate", "rawTimeIn", "rawTimeOut", "rawLunchOut", "rawLunchIn", "id"].includes(
-                          col
-                        )
+                        ![
+                          "rawDate",
+                          "rawTimeIn",
+                          "rawTimeOut",
+                          "rawLunchOut",
+                          "rawLunchIn",
+                          "id",
+                        ].includes(col)
                     )
                     .map((col) => (
-                      <td key={col} data-label={col}>
-                        {col === "Status" ? (
-                          <span
-                            className={`attendance_status-${r[col]
-                              .toLowerCase()
-                              .replace("_", "-")}`}
-                          >
-                            {formatAttStatus(r[col])}
-                          </span>
-                        ) : (
-                          r[col]
-                        )}
-                      </td>
+                      <th key={col}>{col}</th>
                     ))}
-                  <td>
-                    {role === "ADMIN" && (
-                      <button
-                        className="attendance_edit_btn"
-                        onClick={() => openEditPopup(r)}
-                      >
-                        Edit
-                      </button>
-                    )}
-                  </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {paginatedData.map((r, i) => (
+                  <tr key={i}>
+                    {Object.keys(r)
+                      .filter(
+                        (col) =>
+                          ![
+                            "rawDate",
+                            "rawTimeIn",
+                            "rawTimeOut",
+                            "rawLunchOut",
+                            "rawLunchIn",
+                            "id",
+                          ].includes(col)
+                      )
+                      .map((col) => (
+                        <td key={col} data-label={col}>
+                          {col === "Status" ? (
+                            <span
+                              className={`attendance_status-${r[col]
+                                .toLowerCase()
+                                .replace("_", "-")}`}
+                            >
+                              {formatAttStatus(r[col])}
+                            </span>
+                          ) : (
+                            r[col]
+                          )}
+                        </td>
+                      ))}
+                    <td>
+                      {role === "ADMIN" && (
+                        <button
+                          className="attendance_edit_btn"
+                          onClick={() => openEditPopup(r)}
+                        >
+                          Edit
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
       </Loader>
-      
+
       {editingRecord && (
         <EditAttendancePopup
           record={editingRecord}
