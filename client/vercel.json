@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "its-atttendance-system.vercel.app/api/$1"
+      "destination": "its-attendance-system.vercel.app/api/$1"
     },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
