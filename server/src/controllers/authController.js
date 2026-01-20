@@ -163,6 +163,7 @@ export const login = async (req, res) => {
         department: user.department,
         position: user.position,
         supervisor: user.supervisor,
+        manager: user.manager,
         totalOJTHours: user.totalOJTHours,
         remainingWorkHours: user.remainingWorkHours,
       },
