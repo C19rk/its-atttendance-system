@@ -44,7 +44,11 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
               disabled={isTimedIn || onLeave}
             >
               <span className="att__btn-content">
-                {loadingAction && <Loader loading />}
+                {loadingAction && (
+                  <span className="att__btn-spinner">
+                    <Loader loading />
+                  </span>
+                )}
                 <span>Time In</span>
               </span>
             </button>
@@ -58,7 +62,11 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
             disabled={!canLunchOut || onLeave}
           >
             <span className="att__btn-content">
-              {lunchOutLoading && <Loader loading />}
+              {lunchOutLoading && (
+                <span className="att__btn-spinner">
+                  <Loader loading />
+                </span>
+              )}
               <span>Out for Lunch</span>
             </span>
           </button>
@@ -71,7 +79,11 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
             disabled={!canLunchIn || onLeave}
           >
             <span className="att__btn-content">
-              {lunchInLoading && <Loader loading />}
+              {lunchInLoading && (
+                <span className="att__btn-spinner">
+                  <Loader loading />
+                </span>
+              )}
               <span>Back from Lunch</span>
             </span>
           </button>
@@ -84,7 +96,11 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
             disabled={!isTimedIn || onLeave}
           >
             <span className="att__btn-content">
-              {loadingAction && <Loader loading />}
+              {loadingAction && (
+                <span className="att__btn-spinner">
+                  <Loader loading />
+                </span>
+              )}
               <span>Time Out</span>
             </span>
           </button>

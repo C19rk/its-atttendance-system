@@ -72,10 +72,18 @@
   gap: 8px;
 }
 
+.att__btn-spinner {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  transform: scale(0.2); 
+  margin-right: 4px;     
+}
+
 .att__btn-content .loader,
 .att__btn-content svg {
-  width: 5px;
-  height: 5px;
+  width: 12px;
+  height: 12px;
 }
 
 .att__btn-ti {
