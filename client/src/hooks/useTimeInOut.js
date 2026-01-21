@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { timeIn, timeOut, getUserAttendance } from "../api/attendance";
 import { showToast } from "../components/Notification/toast";
-import API from "../api/api"; // <-- needed for /me
+import API from "../api/api"; 
 
 export function useTimeInOut(userId, onAttendanceChange) {
   const [isTimedIn, setIsTimedIn] = useState(false);

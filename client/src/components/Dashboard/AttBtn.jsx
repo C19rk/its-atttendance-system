@@ -1,5 +1,5 @@
 import "../../styles/AttBtn.css";
-import Loader from "./Spinner/Loader"
+import Loader from "../Spinner/Loader"
 import { useTimeInOut } from "../../hooks/useTimeInOut";
 import { useLunchInOut } from "../../hooks/useLunchInOut";
 
