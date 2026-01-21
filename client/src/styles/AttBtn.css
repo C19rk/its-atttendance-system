@@ -66,6 +66,25 @@
   color: #fff;
 }
 
+.att__btn-content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.att__btn-spinner {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0.7);
+}
+
+.att__btn-text.hidden {
+  visibility: hidden;
+}
+
 .att__btn-ti {
   background-color: #54cc58;
   border: 0.5px solid;
@@ -73,7 +92,8 @@
   border-radius: 5px;
   font-family: Arial, Helvetica, sans-serif;
   font-size: large;
-  padding: 16px 24px;
+  padding: 16px 24px; 
+  position: relative;
 }
 
 .att__btn-to {
@@ -83,7 +103,8 @@
   border-radius: 5px;
   font-family: Arial, Helvetica, sans-serif;
   font-size: large;
-  padding: 16px 24px;
+  padding: 16px 24px;  
+  position: relative;
 }
 
 .att__btn-ti:hover {
@@ -111,7 +132,8 @@
   border-radius: 5px;
   font-family: Arial, Helvetica, sans-serif;
   font-size: large;
-  padding: 16px 24px;
+  padding: 16px 24px;  
+  position: relative;
 }
 
 .att__btn-lo {
@@ -121,7 +143,8 @@
   border-radius: 5px;
   font-family: Arial, Helvetica, sans-serif;
   font-size: large;
-  padding: 16px 24px;
+  padding: 16px 24px;  
+  position: relative;
 }
 
 .att__btn-li:hover {
