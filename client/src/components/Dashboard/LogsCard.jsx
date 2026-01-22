@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
+import useDateTimeOptions from "../../hooks/useDateTimeOptions";
 import { getUserAttendance } from "../../api/attendance";
 import "../../styles/LogsCard.css";
 
@@ -8,12 +9,7 @@ function LogsCard({ userName = "User", reload }) {
 
   const [logs, setLogs] = useState([]);
 
-  const options = useMemo(() => ({
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-  }), []);
+  const { timeOptions, toGMT8 } = useDateTimeOptions();
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -24,13 +20,13 @@ function LogsCard({ userName = "User", reload }) {
         const sortedLogs = res.attendance
           .sort((a, b) => new Date(b.date) - new Date(a.date))
           .slice(0, 3)
-          .map(r => {
-            const ti = r.timeIn ? new Date(r.timeIn) : null;
-            const to = r.timeOut ? new Date(r.timeOut) : null;
+          .map((r) => {
+            const ti = toGMT8(r.timeIn);
+            const to = toGMT8(r.timeOut);
 
             return {
-              timeIn: ti ? ti.toLocaleTimeString("en-US", options) : "-",
-              timeOut: to ? to.toLocaleTimeString("en-US", options) : "-",
+              timeIn: ti ? ti.toLocaleTimeString("en-US", timeOptions) : "-",
+              timeOut: to ? to.toLocaleTimeString("en-US", timeOptions) : "-",
             };
           });
 
@@ -41,7 +37,7 @@ function LogsCard({ userName = "User", reload }) {
     };
 
     fetchLogs();
-  }, [userId, options, reload]); // <-- add reload
+  }, [userId, reload, timeOptions]); 
   return (
     <div className="logs-card">
       <div className="logs-card__header">
