@@ -15,6 +15,16 @@ function LogsCard({ userName = "User", reload }) {
     hour12: false,
   }), []);
 
+ const convertUTCToGMT8 = (timeStr) => {
+  if (!timeStr) return "-";
+
+  let [h, m] = timeStr.split(":").map(Number);
+
+  h = (h + 8) % 24;
+
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+};
+
   useEffect(() => {
     const fetchLogs = async () => {
       if (!userId) return;
@@ -47,7 +57,9 @@ function LogsCard({ userName = "User", reload }) {
       <div className="logs-card__header">
         <span>
           {user?.todaySchedule
-            ? `${user.todaySchedule.startTime} - ${user.todaySchedule.endTime}`
+            ? `${convertUTCToGMT8(user.todaySchedule.startTime)} - ${convertUTCToGMT8(
+              user.todaySchedule.endTime
+            )}`
             : "No schedule today"}
         </span>
         <span>{userName}</span>
