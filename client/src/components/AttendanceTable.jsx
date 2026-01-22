@@ -10,6 +10,7 @@ import { formatHoursToHHMM } from "../hooks/formatHours";
 import usePagination from "../hooks/pagination";
 import Pagination from "./Pagination";
 import Loader from "./Spinner/Loader";
+import AttendanceLoader from "./AttendanceLoader";
 import "../styles/AttendanceTable.css";
 
 export default function AttendanceTable({
@@ -25,6 +26,7 @@ export default function AttendanceTable({
   const [editingRecord, setEditingRecord] = useState(null);
   const [reloadCounter, setReloadCounter] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const isDesktop = useIsDesktop();
 
@@ -37,14 +39,8 @@ export default function AttendanceTable({
     customEnd: "",
   });
 
-  const {
-    filterType,
-    filterWeek,
-    searchField,
-    query,
-    customStart,
-    customEnd,
-  } = filters;
+  const { filterType, filterWeek, searchField, query, customStart, customEnd } =
+    filters;
 
   const options = useMemo(
     () => ({
@@ -52,7 +48,7 @@ export default function AttendanceTable({
       month: "short",
       day: "numeric",
     }),
-    []
+    [],
   );
 
   const timeOptions = useMemo(
@@ -62,111 +58,123 @@ export default function AttendanceTable({
       second: "2-digit",
       hour12: false,
     }),
-    []
+    [],
   );
 
-  const reload = () => setReloadCounter((prev) => prev + 1);
+  const triggerReload = () => setReloadCounter((prev) => prev + 1);
 
   const getWeekOfMonth = (date) => {
     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
     return Math.ceil((date.getDate() + firstDay) / 7);
   };
 
-  useEffect(() => {
-    const fetchAttendance = async () => {
-      if (!userId) return;
+  const fetchAttendance = async () => {
+    if (!userId) return;
 
-      setLoading(true);
+    setLoading(true);
 
-      try {
-        let res;
-        if (role === "ADMIN") res = await getAllAttendance();
-        else res = await getUserAttendance(userId);
+    try {
+      let res;
+      if (role === "ADMIN") res = await getAllAttendance();
+      else res = await getUserAttendance(userId);
 
-        let dateFiltered = res.attendance;
+      let dateFiltered = res.attendance;
 
-        if (filterType === "Month") {
-          dateFiltered = res.attendance.filter((r) => {
-            const d = new Date(r.date);
-            return d >= firstDay && d <= lastDay;
-          });
-        }
+      if (filterType === "Month") {
+        dateFiltered = res.attendance.filter((r) => {
+          const d = new Date(r.date);
+          return d >= firstDay && d <= lastDay;
+        });
+      }
 
-        if (filterType === "Week") {
-          // Filter only by month first
-          let monthFiltered = res.attendance.filter((r) => {
-            const d = new Date(r.date);
-            return d >= firstDay && d <= lastDay;
-          });
-
-          dateFiltered = monthFiltered.filter(
-            (r) => getWeekOfMonth(new Date(r.date)) === filterWeek
-          );
-        }
-
-        // Custom Range Filter
-        if (filterType === "Custom") {
-          if (customStart && customEnd) {
-            const start = new Date(customStart + "T00:00:00");
-            const end = new Date(customEnd + "T23:59:59");
-            end.setHours(23, 59, 59);
-
-            dateFiltered = res.attendance.filter((r) => {
-              const d = new Date(r.date);
-              return d >= start && d <= end;
-            });
-          }
-        }
-
-        const formatted = dateFiltered.map((r) => {
-          const ti = r.timeIn ? new Date(r.timeIn) : null;
-          const to = r.timeOut ? new Date(r.timeOut) : null;
-
-          const lo = r.lunchOut ? new Date(r.lunchOut) : null;
-          const li = r.lunchIn ? new Date(r.lunchIn) : null;
-
-          // const workMinutes = ti && to ? Math.round((to - ti) / 1000 / 60) : null;
-
-          // const lunchMinutes = 60;
-
-          const lunchTardyMinutes = r.lunchTardinessMinutes || 0;
-
-          const tardyMinutes = r.tardinessMinutes || 0;
-
-          const presentDays = res.workDays[String(r.userId)] || 0;
-
-          return {
-            id: r.id,
-            rawDate: r.date,
-            rawTimeIn: r.timeIn,
-            rawTimeOut: r.timeOut,
-            rawLunchOut: r.lunchOut,
-            rawLunchIn: r.lunchIn,
-
-            Intern: role === "ADMIN" ? r.user.username : user.username,
-            Status: r.status,
-            Date: new Date(r.date).toLocaleDateString("en-US", options),
-            "Time In": ti ? ti.toLocaleTimeString("en-US", {...timeOptions,timeZone: "Asia/Manila",}) : "-",
-            "Lunch Out": lo ? lo.toLocaleTimeString("en-US", {...timeOptions,timeZone: "Asia/Manila",}) : "-",
-            "Lunch In": li ? li.toLocaleTimeString("en-US", {...timeOptions,timeZone: "Asia/Manila",}) : "-",
-            "Time Out": to ? to.toLocaleTimeString("en-US", {...timeOptions,timeZone: "Asia/Manila",}) : "-",
-            "Lunch Tardy": lunchTardyMinutes > 0 ? `${lunchTardyMinutes} mins` : "-",
-            Tardiness: tardyMinutes > 0 ? `${tardyMinutes} mins` : "-",
-            DAYS: presentDays,
-            TOTAL: r.straightWorkHours !== null ? formatHoursToHHMM(r.straightWorkHours) : "-",
-            ACTUAL: r.totalWorkHours !== null ? formatHoursToHHMM(r.totalWorkHours) : "-",
-          };
+      if (filterType === "Week") {
+        // Filter only by month first
+        let monthFiltered = res.attendance.filter((r) => {
+          const d = new Date(r.date);
+          return d >= firstDay && d <= lastDay;
         });
 
-        setRecords(formatted);
-      } catch (err) {
-        console.error(err);
-        setRecords([]);
-      } finally {
-        setLoading(false);
+        dateFiltered = monthFiltered.filter(
+          (r) => getWeekOfMonth(new Date(r.date)) === filterWeek,
+        );
       }
-    };
 
+      // --- CUSTOM RANGE FILTER ---
+      if (filterType === "Custom") {
+        if (customStart && customEnd) {
+          const start = new Date(customStart + "T00:00:00");
+          const end = new Date(customEnd + "T23:59:59");
+          end.setHours(23, 59, 59);
+
+          dateFiltered = res.attendance.filter((r) => {
+            const d = new Date(r.date);
+            return d >= start && d <= end;
+          });
+        }
+      }
+
+      const formatted = dateFiltered.map((r) => {
+        const ti = r.timeIn ? new Date(r.timeIn) : null;
+        const to = r.timeOut ? new Date(r.timeOut) : null;
+
+        const lo = r.lunchOut ? new Date(r.lunchOut) : null;
+        const li = r.lunchIn ? new Date(r.lunchIn) : null;
+
+        // const workMinutes = ti && to ? Math.round((to - ti) / 1000 / 60) : null;
+
+        // const lunchMinutes = 60;
+
+        const lunchTardyMinutes = r.lunchTardinessMinutes || 0;
+
+        const tardyMinutes = r.tardinessMinutes || 0;
+
+        const presentDays = res.workDays[String(r.userId)] || 0;
+
+        return {
+          id: r.id,
+          rawDate: r.date,
+          rawTimeIn: r.timeIn,
+          rawTimeOut: r.timeOut,
+          rawLunchOut: r.lunchOut,
+          rawLunchIn: r.lunchIn,
+
+          Intern: role === "ADMIN" ? r.user.username : user.username,
+          Status: r.status,
+          Date: new Date(r.date).toLocaleDateString("en-US", options),
+          "Time In": ti ? ti.toLocaleTimeString("en-US", timeOptions) : "-",
+          "Lunch Out": lo ? lo.toLocaleTimeString("en-US", timeOptions) : "-",
+          "Lunch In": li ? li.toLocaleTimeString("en-US", timeOptions) : "-",
+          "Time Out": to ? to.toLocaleTimeString("en-US", timeOptions) : "-",
+          "Lunch Tardy":
+            lunchTardyMinutes > 0 ? `${lunchTardyMinutes} mins` : "-",
+          Tardiness: tardyMinutes > 0 ? `${tardyMinutes} mins` : "-",
+          DAYS: presentDays,
+          TOTAL:
+            r.straightWorkHours !== null
+              ? formatHoursToHHMM(r.straightWorkHours)
+              : "-",
+          ACTUAL:
+            r.totalWorkHours !== null
+              ? formatHoursToHHMM(r.totalWorkHours)
+              : "-",
+        };
+      });
+
+      setRecords(formatted);
+    } catch (err) {
+      console.error(err);
+      setRecords([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Async reload function for save
+  const reload = async () => {
+    await fetchAttendance(); // ensures fetch finishes before continuing
+  };
+
+  useEffect(() => {
     fetchAttendance();
   }, [
     userId,
@@ -235,12 +243,12 @@ export default function AttendanceTable({
       />
 
       <Loader loading={loading}>
-        {!loading && records.length === 0 ? (
+        {records.length === 0 ? (
           <p className="attendance_message">
             No attendance for this{" "}
             {filterType === "Month" ? "month" : `week ${filterWeek}`}
           </p>
-        ) : !loading ? (
+        ) : (
           <div className="attendance_container">
             <table className="attendance_tbl">
               <thead>
@@ -255,7 +263,7 @@ export default function AttendanceTable({
                           "rawLunchOut",
                           "rawLunchIn",
                           "id",
-                        ].includes(col)
+                        ].includes(col),
                     )
                     .map((col) => (
                       <th key={col}>{col}</th>
@@ -275,7 +283,7 @@ export default function AttendanceTable({
                             "rawLunchOut",
                             "rawLunchIn",
                             "id",
-                          ].includes(col)
+                          ].includes(col),
                       )
                       .map((col) => (
                         <td key={col} data-label={col}>
@@ -307,14 +315,20 @@ export default function AttendanceTable({
               </tbody>
             </table>
           </div>
-        ) : null}
+        )}
       </Loader>
 
+      {saving && <AttendanceLoader />}
       {editingRecord && (
         <EditAttendancePopup
           record={editingRecord}
           onClose={closeEditPopup}
-          onSave={reload}
+          onSave={async () => {
+            setSaving(true); // show saving loader
+            await reload(); // wait until data is fetched
+            setSaving(false); // hide saving loader
+            closeEditPopup(); // close popup
+          }}
         />
       )}
     </div>
