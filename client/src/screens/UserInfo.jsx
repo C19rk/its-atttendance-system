@@ -6,7 +6,7 @@ import API from "../api/api";
 import { UserContext } from "../context/UserContext";
 import UserTotalOJTHours from "../components/UserTotalOJTHours";
 import DashboardLayout from "../components/DashboardLayout";
-import Loader from "../components/Loader";
+import UserInfoLoader from "../components/UserInfoLoader";
 
 const UserInfo = () => {
   const [user, setUser] = useState(null); // real-time update
@@ -174,11 +174,11 @@ const UserInfo = () => {
     }
   };
 
-  if (!user) return <Loader />;
+  if (!user) return <UserInfoLoader />;
 
   return (
     <DashboardLayout>
-      {loading && <Loader />}
+      {loading && <UserInfoLoader />}
       <div className="user-info-container">
         <h2>User Info</h2>
         {/* PFP */}
