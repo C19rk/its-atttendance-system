@@ -8,6 +8,7 @@ import FilterAttendanceActions from "./FilterAttendanceActions";
 import FilterAttendanceActionsMobile from "./FilterAttendanceActionsMobile";
 import { formatHoursToHHMM } from "../hooks/formatHours";
 import usePagination from "../hooks/pagination";
+import useDateTimeOptions from "../hooks/useDateTimeOptions";
 import Pagination from "./Pagination";
 import Loader from "./Spinner/Loader";
 import AttendanceLoader from "./AttendanceLoader";
@@ -43,24 +44,7 @@ export default function AttendanceTable({
   const { filterType, filterWeek, searchField, query, customStart, customEnd } =
     filters;
 
-  const options = useMemo(
-    () => ({
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    }),
-    [],
-  );
-
-  const timeOptions = useMemo(
-    () => ({
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    }),
-    [],
-  );
+  const { dateOptions, timeOptions, toGMT8 } = useDateTimeOptions();
 
   const triggerReload = () => setReloadCounter((prev) => prev + 1);
 
@@ -115,15 +99,10 @@ export default function AttendanceTable({
       }
 
       const formatted = dateFiltered.map((r) => {
-        const ti = r.timeIn ? new Date(r.timeIn) : null;
-        const to = r.timeOut ? new Date(r.timeOut) : null;
-
-        const lo = r.lunchOut ? new Date(r.lunchOut) : null;
-        const li = r.lunchIn ? new Date(r.lunchIn) : null;
-
-        // const workMinutes = ti && to ? Math.round((to - ti) / 1000 / 60) : null;
-
-        // const lunchMinutes = 60;
+        const ti = toGMT8(r.timeIn);
+        const to = toGMT8(r.timeOut);
+        const lo = toGMT8(r.lunchOut);
+        const li = toGMT8(r.lunchIn);
 
         const lunchTardyMinutes = r.lunchTardinessMinutes || 0;
 
@@ -141,13 +120,12 @@ export default function AttendanceTable({
 
           Intern: role === "ADMIN" ? r.user.username : user.username,
           Status: r.status,
-          Date: new Date(r.date).toLocaleDateString("en-US", options),
+          Date: new Date(r.date).toLocaleDateString("en-US", dateOptions),
           "Time In": ti ? ti.toLocaleTimeString("en-US", timeOptions) : "-",
           "Lunch Out": lo ? lo.toLocaleTimeString("en-US", timeOptions) : "-",
           "Lunch In": li ? li.toLocaleTimeString("en-US", timeOptions) : "-",
           "Time Out": to ? to.toLocaleTimeString("en-US", timeOptions) : "-",
-          "Lunch Tardy":
-            lunchTardyMinutes > 0 ? `${lunchTardyMinutes} mins` : "-",
+          "Lunch Tardy": lunchTardyMinutes > 0 ? `${lunchTardyMinutes} mins` : "-",
           Tardiness: tardyMinutes > 0 ? `${tardyMinutes} mins` : "-",
           DAYS: presentDays,
           TOTAL:
@@ -187,7 +165,7 @@ export default function AttendanceTable({
     customEnd,
     user.username,
     reloadCounter,
-    options,
+    dateOptions,
     timeOptions,
     role,
   ]);
