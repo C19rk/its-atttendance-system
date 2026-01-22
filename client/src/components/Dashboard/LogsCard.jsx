@@ -15,24 +15,15 @@ function LogsCard({ userName = "User", reload }) {
     hour12: false,
   }), []);
 
-  const convertUTCToGMT8 = (timeStr) => {
-    if (!timeStr) return "-";
+ const convertUTCToGMT8 = (timeStr) => {
+  if (!timeStr) return "-";
 
-    const [hours, minutes] = timeStr.split(":").map(Number);
+  let [h, m] = timeStr.split(":").map(Number);
 
-    // Create a UTC date (date part doesn't matter)
-    const utcDate = new Date(Date.UTC(1970, 0, 1, hours, minutes));
+  h = (h + 8) % 24;
 
-    // Convert to GMT+8
-    utcDate.setHours(utcDate.getHours() + 8);
-
-    return utcDate.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  };
-
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+};
 
   useEffect(() => {
     const fetchLogs = async () => {
