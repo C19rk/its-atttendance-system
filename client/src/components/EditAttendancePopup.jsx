@@ -1,20 +1,28 @@
 import { useState } from "react";
 import { updateAttendance } from "../api/attendance";
-import Loader from "../components/Spinner/Loader";
+import EditAttendanceLoader from "./EditAttendanceLoader";
 import "../styles/EditAttendancePopup.css";
 
 export default function EditAttendancePopup({ record, onClose, onSave }) {
-  const [loading, setLoading] = useState(false);
-
-  const [timeIn, setTimeIn] = useState(record["Time In"] !== "-" ? record["Time In"] : "");
-  const [lunchOut, setLunchOut] = useState(record["Lunch Out"] !== "-" ? record["Lunch Out"] : "");
-  const [lunchIn, setLunchIn] = useState(record["Lunch In"] !== "-" ? record["Lunch In"] : "");
-  const [timeOut, setTimeOut] = useState(record["Time Out"] !== "-" ? record["Time Out"] : "");
+  const [timeIn, setTimeIn] = useState(
+    record["Time In"] !== "-" ? record["Time In"] : "",
+  );
+  const [lunchOut, setLunchOut] = useState(
+    record["Lunch Out"] !== "-" ? record["Lunch Out"] : "",
+  );
+  const [lunchIn, setLunchIn] = useState(
+    record["Lunch In"] !== "-" ? record["Lunch In"] : "",
+  );
+  const [timeOut, setTimeOut] = useState(
+    record["Time Out"] !== "-" ? record["Time Out"] : "",
+  );
   const [status, setStatus] = useState(record.status || "PRESENT");
+  const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
+    setSaving(true);
+
     try {
-      setLoading(true);
       const date = new Date(record.rawDate);
       const formatTime = (t) => {
         if (!t) return null;
@@ -29,7 +37,7 @@ export default function EditAttendancePopup({ record, onClose, onSave }) {
         timeOut: formatTime(timeOut),
         lunchIn: formatTime(lunchIn),
         lunchOut: formatTime(lunchOut),
-        status, // ✅ include status
+        status, // include status
       });
 
       onSave();
@@ -38,17 +46,22 @@ export default function EditAttendancePopup({ record, onClose, onSave }) {
       console.error(err);
       alert("Failed to update attendance");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
   return (
     <div className="attendance_popup_overlay">
+      {saving && <EditAttendanceLoader />}
       <div className="attendance_popup">
         <h2>Edit Attendance</h2>
 
         <label>Time In:</label>
-        <input type="time" value={timeIn} onChange={(e) => setTimeIn(e.target.value)} />
+        <input
+          type="time"
+          value={timeIn}
+          onChange={(e) => setTimeIn(e.target.value)}
+        />
 
         <label>Lunch Out:</label>
         <input
@@ -65,7 +78,11 @@ export default function EditAttendancePopup({ record, onClose, onSave }) {
         />
 
         <label>Time Out:</label>
-        <input type="time" value={timeOut} onChange={(e) => setTimeOut(e.target.value)} />
+        <input
+          type="time"
+          value={timeOut}
+          onChange={(e) => setTimeOut(e.target.value)}
+        />
 
         <label>Status:</label>
         <select value={status} onChange={(e) => setStatus(e.target.value)}>
@@ -76,18 +93,7 @@ export default function EditAttendancePopup({ record, onClose, onSave }) {
         </select>
 
         <div className="attendance_popup_buttons">
-          <button onClick={handleSave} disabled={loading}>
-            <span className="attendance_btn-content">
-              {loading && (
-                <span className="attendance_btn-spinner">
-                  <Loader loading />
-                </span>
-              )}
-              <span className={`attendance_btn-text ${loading ? "hidden" : ""}`}>
-                Save
-              </span>
-            </span>
-          </button>
+          <button onClick={handleSave}>Save</button>
           <button onClick={onClose}>Cancel</button>
         </div>
       </div>
