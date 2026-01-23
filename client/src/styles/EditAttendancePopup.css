@@ -147,7 +147,7 @@
 
 .attendance_popup_buttons button {
   position: relative;
-  min-height: 40px;
+  min-height: 10px;
   overflow: visible;
 }
 
