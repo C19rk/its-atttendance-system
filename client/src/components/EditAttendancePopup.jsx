@@ -77,9 +77,16 @@ export default function EditAttendancePopup({ record, onClose, onSave }) {
 
         <div className="attendance_popup_buttons">
           <button onClick={handleSave} disabled={loading}>
-            <Loader loading={loading}>
-              Save
-            </Loader>
+            <span className="attendance_btn-content">
+              {loading && (
+                <span className="attendance_btn-spinner">
+                  <Loader loading />
+                </span>
+              )}
+              <span className={`attendance_btn-text ${loading ? "hidden" : ""}`}>
+                Save
+              </span>
+            </span>
           </button>
           <button onClick={onClose}>Cancel</button>
         </div>
