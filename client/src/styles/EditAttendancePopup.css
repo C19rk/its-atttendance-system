@@ -129,10 +129,11 @@
 /* Prevent spinner from resizing the Save button */
 .attendance_popup_buttons button > div {
   padding: 0 !important;
-  height: 50%;
+  margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 1;
 }
 
 /* Ensure spinner stays centered and compact */
@@ -143,7 +144,7 @@
 }
 
 .attendance_popup_buttons button {
-  min-height: 40px;
+  min-height: 20px;
 }
 
 .attendance_popup_buttons button:disabled {
