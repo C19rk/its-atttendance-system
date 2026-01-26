@@ -15,18 +15,6 @@ function LogsCard({ userName = "User", reload }) {
     hour12: false,
   }), []);
 
-  const formatToPHTime = (isoString) => {
-    if (!isoString) return "-";
-
-    return new Date(isoString).toLocaleTimeString("en-PH", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-      timeZone: "Asia/Manila",
-    });
-  };
-
-
   useEffect(() => {
     const fetchLogs = async () => {
       if (!userId) return;
@@ -59,7 +47,7 @@ function LogsCard({ userName = "User", reload }) {
       <div className="logs-card__header">
         <span>
           {user?.todaySchedule
-            ? `${formatToPHTime(user.todaySchedule.startTime)} - ${formatToPHTime(
+            ? `${formatTime(user.todaySchedule.startTime)} - ${formatTime(
               user.todaySchedule.endTime
             )}`
             : "No schedule today"}
