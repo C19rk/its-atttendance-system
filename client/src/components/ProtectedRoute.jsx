@@ -12,7 +12,7 @@ function ProtectedRoute({ children, adminOnly = false }) {
     try {
       const decoded = jwtDecode(token); // decode JWT
       if (decoded.role !== "ADMIN") {
-        return <ErrorPage message="YOU DO NOT HAVE ACCESS TO THIS PAGE!!" />;
+        return <ErrorPage message="" />;
       }
     } catch (err) {
       return <ErrorPage message="Invalid token" />;
