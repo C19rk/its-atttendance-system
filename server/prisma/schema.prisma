@@ -100,11 +100,14 @@ model Attendance {
   timeIn  DateTime?
   lunchOut DateTime?
   lunchIn DateTime?
+  breakOut DateTime?
+  breakIn  DateTime?
   timeOut DateTime?
   status  AttendanceStatus @default(PRESENT)
 
   tardinessMinutes        Int   @default(0)
   lunchTardinessMinutes   Int   @default(0)
+  breakTardinessMinutes   Int @default(0)
   straightWorkHours Float?
   totalWorkHours Float? 
 
