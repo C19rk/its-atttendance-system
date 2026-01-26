@@ -13,6 +13,15 @@ export default function EditAttendancePopup({ record, onClose, onSave }) {
   const [lunchIn, setLunchIn] = useState(
     record["Lunch In"] !== "-" ? record["Lunch In"] : "",
   );
+
+  const [breakOut, setBreakOut] = useState(
+    record["Break Out"] !== "-" ? record["Break Out"] : ""
+  );
+
+  const [breakIn, setBreakIn] = useState(
+    record["Break In"] !== "-" ? record["Break In"] : ""
+  );
+
   const [timeOut, setTimeOut] = useState(
     record["Time Out"] !== "-" ? record["Time Out"] : "",
   );
@@ -37,6 +46,8 @@ export default function EditAttendancePopup({ record, onClose, onSave }) {
         timeOut: formatTime(timeOut),
         lunchIn: formatTime(lunchIn),
         lunchOut: formatTime(lunchOut),
+        breakOut: formatTime(breakOut),
+        breakIn: formatTime(breakIn),
         status, // include status
       });
 
@@ -77,6 +88,20 @@ export default function EditAttendancePopup({ record, onClose, onSave }) {
           onChange={(e) => setLunchIn(e.target.value)}
         />
 
+        <label>Break Out:</label>
+        <input
+          type="time"
+          value={breakOut}
+          onChange={(e) => setBreakOut(e.target.value)}
+        />
+
+        <label>Break In:</label>
+        <input
+          type="time"
+          value={breakIn}
+          onChange={(e) => setBreakIn(e.target.value)}
+        />
+        
         <label>Time Out:</label>
         <input
           type="time"
