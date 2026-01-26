@@ -22,7 +22,7 @@ function ErrorPage({ message }) {
           : "SIGN IN FIRST TO ACCESS THIS PAGE!!"}
       </h2>
       <h3 style={{ color: "red" }}>
-        {token ? "Redirecting to dashboard..." : "Redirecting to home page"}
+        {token ? "Redirecting to dashboard..." : "Redirecting to home page..."}
       </h3>
       <p>{message}</p>
     </div>
