@@ -62,14 +62,20 @@ export const getMe = async (req, res) => {
     }
 
     const workSchedule = await getWorkSchedule(userId);
+    const formatTimePH = (date) => date.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Manila",
+    });
 
     res.json({
       ...user,
       remainingWorkHours: remainingHours ?? 0,
       todaySchedule: workSchedule
         ? {
-            startTime: workSchedule.start.toTimeString().slice(0, 5),
-            endTime: workSchedule.end.toTimeString().slice(0, 5),
+            startTime: formatTimePH(workSchedule.start),
+            endTime: formatTimePH(workSchedule.end),
           }
         : null,
     });
