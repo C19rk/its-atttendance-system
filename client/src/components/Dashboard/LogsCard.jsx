@@ -15,6 +15,8 @@ function LogsCard({ userName = "User", reload }) {
     hour12: false,
   }), []);
 
+  const formatTime = (timeStr) => timeStr || "-";
+
   useEffect(() => {
     const fetchLogs = async () => {
       if (!userId) return;
@@ -47,7 +49,9 @@ function LogsCard({ userName = "User", reload }) {
       <div className="logs-card__header">
         <span>
           {user?.todaySchedule
-            ? `${user.todaySchedule.startTime} - ${user.todaySchedule.endTime}`
+             ? `${formatTime(user.todaySchedule.startTime)} - ${formatTime(
+              user.todaySchedule.endTime
+            )}`
             : "No schedule today"}
         </span>
         <span>{userName}</span>
