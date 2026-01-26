@@ -15,15 +15,17 @@ function LogsCard({ userName = "User", reload }) {
     hour12: false,
   }), []);
 
- const convertUTCToGMT8 = (timeStr) => {
-  if (!timeStr) return "-";
+  const formatToPHTime = (isoString) => {
+    if (!isoString) return "-";
 
-  let [h, m] = timeStr.split(":").map(Number);
+    return new Date(isoString).toLocaleTimeString("en-PH", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Manila",
+    });
+  };
 
-  h = (h + 8) % 24;
-
-  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-};
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -57,7 +59,7 @@ function LogsCard({ userName = "User", reload }) {
       <div className="logs-card__header">
         <span>
           {user?.todaySchedule
-            ? `${convertUTCToGMT8(user.todaySchedule.startTime)} - ${convertUTCToGMT8(
+            ? `${formatToPHTime(user.todaySchedule.startTime)} - ${formatToPHTime(
               user.todaySchedule.endTime
             )}`
             : "No schedule today"}
