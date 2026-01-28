@@ -38,6 +38,10 @@ export default function UserTotalOJTHours() {
     fetchMe();
   }, []);
 
+  if (role === "ADMIN") {
+    return null;
+  }
+
   if (loading) return <p>Loading User's Total OJT Hours...</p>;
   if (!loading && role !== "USER") {
     return null;
