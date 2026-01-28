@@ -19,6 +19,16 @@ function LogsCard({ userName = "User", reload }) {
     [],
   );
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+    });
+  };
+
   const formatTime = (timeStr) => timeStr || "-";
 
   useEffect(() => {
@@ -41,9 +51,15 @@ function LogsCard({ userName = "User", reload }) {
             const ti = r.timeIn ? new Date(r.timeIn) : null;
             const to = r.timeOut ? new Date(r.timeOut) : null;
 
+            const dateLabel = formatDate(r.date);
+
             return {
-              timeIn: ti ? ti.toLocaleTimeString("en-US", options) : "-",
-              timeOut: to ? to.toLocaleTimeString("en-US", options) : "-",
+              timeIn: ti
+                ? `${dateLabel}: ${ti.toLocaleTimeString("en-US", options)}`
+                : `${dateLabel}: -`,
+              timeOut: to
+                ? `${dateLabel}: ${to.toLocaleTimeString("en-US", options)}`
+                : `${dateLabel}: -`,
             };
           });
 
