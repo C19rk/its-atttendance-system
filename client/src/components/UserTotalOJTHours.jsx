@@ -6,7 +6,7 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5001/api";
 export default function UserTotalOJTHours() {
   const [remainingHours, setRemainingHours] = useState(null);
   const [totalHours, setTotalHours] = useState(null);
-  const [role, setRole] = useState(undefined);
+  const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useContext(UserContext);
@@ -38,18 +38,24 @@ export default function UserTotalOJTHours() {
     fetchMe();
   }, []);
 
-  if (loading && (role === undefined || role === "USER")) {
-    return <p>Loading User's Total OJT Hours...</p>;
+  if (loading) {
+    if (role === "USER") {
+      return <p>Loading User's Total OJT Hours...</p>;
+    } else {
+      return null;
+    }
   }
 
-  if (role !== "USER") return null;
+  if (role !== "USER") {
+    return null;
+  }
 
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div style={{ textAlign: "center", margin: "20px" }}>
       <h3>OJT Hours</h3>
-      {totalHours === null ? (
+      {totalHours === null || totalHours === 0 ? (
         <p>The admin hasn’t set your Total OJT hours yet.</p>
       ) : (
         <>
