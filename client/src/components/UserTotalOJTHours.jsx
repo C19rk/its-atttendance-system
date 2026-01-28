@@ -39,7 +39,7 @@ export default function UserTotalOJTHours() {
   }, []);
 
   if (loading) {
-    if role === null || (role === "USER") {
+    if (role === null || role === "USER") {
       return <p>Loading User's Total OJT Hours...</p>;
     } else {
       return null;
