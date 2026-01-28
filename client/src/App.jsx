@@ -5,6 +5,7 @@ import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ReverseProtectedRoute from "./components/ReverseProtectedRoute";
 import ProtectedResetRoute from "./components/ProtectedResetRoute";
 // Styling
 import "./App.css";
@@ -27,7 +28,15 @@ function App() {
       <Router>
         <Routes>
           {/* Default Page "/" */}
-          <Route path="/" element={<Login />} />
+
+          <Route
+            path="/"
+            element={
+              <ReverseProtectedRoute>
+                <Login />
+              </ReverseProtectedRoute>
+            }
+          />
 
           <Route
             path="/dashboard"
@@ -46,7 +55,15 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
+
+          <Route
+            path="/forgot-password"
+            element={
+              <ReverseProtectedRoute>
+                <ForgotPassword />
+              </ReverseProtectedRoute>
+            }
+          />
 
           {/* ---------------------------- Reset Pass URL Security ---------------------------- */}
           <Route
@@ -59,7 +76,14 @@ function App() {
           />
           <Route path="/reset-password" element={<ResetErrorPage />} />
 
-          <Route path="/sign-up" element={<Signup />} />
+          <Route
+            path="/sign-up"
+            element={
+              <ReverseProtectedRoute>
+                <Signup />
+              </ReverseProtectedRoute>
+            }
+          />
           <Route
             path="/time-off"
             element={
