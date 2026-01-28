@@ -40,7 +40,7 @@ export default function UserTotalOJTHours() {
 
   if (role === "ADMIN") return null;
 
-  if (loading && role === "USER") {
+  if (loading && role !== "ADMIN") {
     return <p>Loading User's Total OJT Hours...</p>;
   }
 
