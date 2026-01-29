@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { signUpUser } from "../api/auth";
 import "../styles/Signup.css";
 import PasswordInput from "../components/PasswordInput";
-import SuccessPopup from "../components/SuccessPopup";
+import SignupSuccess from "../components/SignupSuccess";
 import Loader from "../components/Loader";
 import API from "../api/api";
 
@@ -86,7 +86,17 @@ function Signup() {
   return (
     <div className="signup-background">
       {loading && <Loader />}
-      <form onSubmit={handleSubmit} className="signup-box">
+      <form
+        onSubmit={handleSubmit}
+        onKeyDown={(e) => {
+          if (showSuccessPopup) return;
+
+          if (e.key === "Enter" || e.key === "NumpadEnter") {
+            handleSubmit(e);
+          }
+        }}
+        className="signup-box"
+      >
         <div className="top-box-header">
           <p className="signup-text"></p>
           <button className="close-btn" onClick={() => navigate("/")}>
@@ -152,9 +162,10 @@ function Signup() {
       </form>
 
       {showSuccessPopup && (
-        <SuccessPopup
+        <SignupSuccess
           message="Sign up successful! You can now log in."
           onClose={() => {
+            localStorage.removeItem("token");
             setShowSuccessPopup(false);
             navigate("/");
           }}
