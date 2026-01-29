@@ -38,8 +38,8 @@ export const getWorkSchedule = async (userId, date = new Date()) => {
     const [sh, sm] = custom.startTime.split(":").map(Number);
     const [eh, em] = custom.endTime.split(":").map(Number);
 
-    start.setUTCHours(sh, sm, 0, 0);
-    end.setUTCHours(eh, em, 0, 0);
+    start.setUTCHours(sh - 8, sm, 0, 0);
+    end.setUTCHours(eh - 8, em, 0, 0);
 
     return { start, end, startTime: custom.startTime, endTime: custom.endTime };
   }
