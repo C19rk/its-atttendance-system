@@ -151,6 +151,7 @@ export default function EditUserScheduleDesktop({ userSchedule, user }) {
                   : ""
               }
               value={searchTerm}
+              onFocus={() => selectedUserId !== "ALL" && setShowUsers(true)}
               onChange={(e) => {
                 if (selectedUserId !== "ALL") {
                   setSearchTerm(e.target.value);
@@ -160,7 +161,7 @@ export default function EditUserScheduleDesktop({ userSchedule, user }) {
             />
           </div>
 
-          {selectedUserId !== "ALL" && showUsers && searchTerm.length > 0 && (
+          {selectedUserId !== "ALL" && showUsers && (
             <div className="user_dropdown">
               <div
                 className="user_dropdown_item all_option"
@@ -183,7 +184,7 @@ export default function EditUserScheduleDesktop({ userSchedule, user }) {
                 </div>
               ))}
 
-              {filteredUsers.length === 0 && (
+              {searchTerm.length > 0 && filteredUsers.length === 0 && (
                 <div className="user_no_results">
                   No users found for "{searchTerm}"
                 </div>

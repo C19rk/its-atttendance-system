@@ -167,7 +167,7 @@ export default function EditUserSchedule({ userSchedule, user }) {
             />
           </div>
 
-          {selectedUserId !== "ALL" && showUsers && searchTerm.length > 0 && (
+          {selectedUserId !== "ALL" && showUsers && (
             <div className="user_dropdown">
               <div
                 className="user_dropdown_item all_option"
