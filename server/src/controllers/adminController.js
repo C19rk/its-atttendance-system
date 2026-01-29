@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { getTimesheetMetadata } from "../utils/timesheetMetadata.js";
+import { updateRemainingWorkHours } from "../utils/hoursOJT/updateRemainingWorkHours.js";
 
 const prisma = new PrismaClient();
 
@@ -194,19 +195,17 @@ export const updateOJTHours = async (req, res) => {
       return res.status(400).json({ message: "Not an intern user." });
     }
 
-    const updatedUser = await prisma.user.update({
+    await prisma.user.update({
       where: { id: userId },
       data: { totalOJTHours },
-      select: {
-        totalOJTHours: true,
-        remainingWorkHours: true,
-      },
     });
+
+    const remainingWorkHours = await updateRemainingWorkHours(userId);
 
     res.json({
       message: "OJT hours updated successfully.",
-      totalOJTHours: updatedUser.totalOJTHours,
-      remainingWorkHours: updatedUser.remainingWorkHours ?? 0,
+      totalOJTHours,
+      remainingWorkHours: remainingWorkHours ?? 0,
     });
   } catch (err) {
     console.error(err);
