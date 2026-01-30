@@ -34,7 +34,6 @@ function Signup() {
         confirmPassword: "",
         general: "",
       });
-      setShowSuccessPopup(false);
     }, 5000);
   };
 
@@ -163,7 +162,7 @@ function Signup() {
 
       {showSuccessPopup && (
         <SignupSuccess
-          message="Sign up successful! You can now log in."
+          message="Registration successful. Your account is currently pending administrative activation."
           onClose={() => {
             localStorage.removeItem("token");
             setShowSuccessPopup(false);
