@@ -28,18 +28,14 @@ function LeaveForm({ onSubmit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  const startDate = new Date(formData.startDate);
+  const endDate = new Date(formData.endDate);
 
-    const startDate = new Date(formData.startDate);
-    const endDate = new Date(formData.endDate);
-
-    // Validate that start and end dates are in the future
-    if (startDate <= today || endDate <= today) {
-      setError("Leave dates must be in the future.");
-      setSuccess("");
-      return;
-    }
+  if (endDate < startDate) {
+    setError("End date cannot be earlier than start date.");
+    setSuccess("");
+    return;
+  }
 
     // Validate leave type
     const validTypes = ["SICK", "VACATION", "HOLIDAY", "OFFSET"];
@@ -130,11 +126,6 @@ function LeaveForm({ onSubmit }) {
             value={formData.startDate}
             onChange={handleChange}
             required
-            min={
-              new Date(new Date().setDate(new Date().getDate() + 1))
-                .toISOString()
-                .split("T")[0]
-            } // tomorrow's date
           />
         </label>
         <label>
@@ -145,11 +136,7 @@ function LeaveForm({ onSubmit }) {
             value={formData.endDate}
             onChange={handleChange}
             required
-            min={
-              new Date(new Date().setDate(new Date().getDate() + 1))
-                .toISOString()
-                .split("T")[0]
-            } // tomorrow's date
+            min={formData.startDate || undefined}
           />
         </label>
       </div>
