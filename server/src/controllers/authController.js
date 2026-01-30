@@ -74,6 +74,16 @@ export const getMe = async (req, res) => {
     res.json({
       ...user,
       remainingWorkHours: remainingHours ?? 0,
+
+      // 🔥 expose the schedule itself, not just a boolean
+      useCustomSchedule: workSchedule
+        ? {
+            startTime: formatTimePH(workSchedule.start),
+            endTime: formatTimePH(workSchedule.end),
+          }
+        : null,
+
+      // optional: keep todaySchedule if other parts still use it
       todaySchedule: workSchedule
         ? {
             startTime: formatTimePH(workSchedule.start),

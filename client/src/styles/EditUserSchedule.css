@@ -132,3 +132,8 @@
     transform: translateY(0);
   }
 }
+
+
+select[multiple] {
+  height: 150px;
+}
