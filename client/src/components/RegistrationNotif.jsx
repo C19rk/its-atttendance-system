@@ -1,24 +1,39 @@
 import { useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import API from "../api/api";
 
 function RegistrationNotif({ user }) {
   const hasNotified = useRef(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user?.role === "ADMIN" && !hasNotified.current) {
-      toast.info("Pending account registrations. See Approvals tab.", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        style: { backgroundColor: "#fff", color: "#333" },
-        closeOnClick: true,
-        pauseOnHover: true,
-        onClick: () => navigate("/approvals"),
-      });
+    const checkPendingUsers = async () => {
+      if (user?.role !== "ADMIN" || hasNotified.current) return;
+
       hasNotified.current = true;
-    }
+
+      try {
+        const { data } = await API.get("/admins/pending-users");
+
+        if (data && data.length > 0) {
+          toast.info(
+            `${data.length} account registrations pending. See Approvals tab.`,
+            {
+              position: "top-center",
+              autoClose: 5000,
+              onClick: () => navigate("/approvals"),
+              style: { marginTop: "10px" },
+            },
+          );
+        }
+      } catch (err) {
+        hasNotified.current = false;
+        console.error("Error checking pending users:", err);
+      }
+    };
+
+    checkPendingUsers();
   }, [user, navigate]);
 
   return null;
